@@ -1,0 +1,411 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+      "title": "Purchasing Service API",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/vendors": {
+        "get": {
+          "summary": "Get list of vendors",
+          "responses": {
+            "200": {
+              "description": "A list of vendors"
+            }
+          },
+          "content" : {
+            "application/json" : {
+                "schema": {
+                  "type": "array",
+                  "items": { "type": "object" }
+                }
+            }
+          }
+        },
+        "post" : {
+            "summary": "Add a new vendor",
+            "requestBody" : {
+                "required": false,
+                "content": {
+                    "application/json" : {
+                        "schema" : {
+                            "type": "object",
+                            "properties": {
+                                "name" : { "type": "string"},
+                                "contact" : {"type" : "string"}
+                            },
+                        "required": ["name", "contact"]
+                        }
+                    }
+                }
+            }
+
+        },
+        "responses" : {
+            "201": {
+                "description" : "Vendor added"
+            }
+        }
+      },
+      "/purchase-requests": {
+      "get": {
+        "summary": "Get all purchase requests",
+        "description": "Retrieve a list of all purchase requests.",
+        "responses": {
+          "200": {
+            "description": "List of purchase requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PurchaseRequest"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new purchase request",
+        "description": "Add a new purchase request to the system.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewPurchaseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Purchase request created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PurchaseRequestResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/purchase-requests/{id}": {
+      "get": {
+        "summary": "Get a purchase request by ID",
+        "description": "Retrieve details of a specific purchase request.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the purchase request to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Purchase request details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PurchaseRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Purchase request not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a purchase request",
+        "description": "Modify details of an existing purchase request.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the purchase request to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePurchaseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Purchase request updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PurchaseRequestResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Purchase request not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a purchase request",
+        "description": "Remove a purchase request from the system.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the purchase request to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Purchase request deleted successfully"
+          },
+          "404": {
+            "description": "Purchase request not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+      "/purchase-approvals": {
+        "post": {
+          "summary": "Approve a purchase request",
+          "responses": {
+            "200": {
+              "description": "Purchase request approved"
+            }
+          }
+        }
+      },
+      "/quality-checks": {
+        "post": {
+          "summary": "Check quality of goods",
+          "responses": {
+            "200": {
+              "description": "Quality check completed"
+            }
+          }
+        }
+      },
+      "/inventory-monitoring": {
+        "get": {
+          "summary": "Monitor inventory",
+          "responses": {
+            "200": {
+              "description": "Inventory status"
+            }
+          }
+        }
+      },
+      "/vendor-payments": {
+        "post": {
+          "summary": "Process vendor payment",
+          "responses": {
+            "200": {
+              "description": "Payment processed"
+            }
+          }
+        }
+      },
+      "/shipment-tracking": {
+        "get": {
+          "summary": "Track shipment",
+          "responses": {
+            "200": {
+              "description": "Shipment status"
+            }
+          }
+        }
+      },
+      "/receiving": {
+        "post": {
+          "summary": "Manage receiving of goods",
+          "responses": {
+            "200": {
+              "description": "Goods received"
+            }
+          }
+        }
+      },
+      "/purchase-reports": {
+        "get": {
+          "summary": "Generate purchase report",
+          "responses": {
+            "200": {
+              "description": "Purchase report generated"
+            }
+          }
+        }
+      },
+      "/finance/budget": {
+        "get": {
+          "summary": "Get budget data",
+          "responses": {
+            "200": {
+              "description": "Budget data"
+            }
+          }
+        }
+      },
+      "/finance/payment-status": {
+        "get": {
+          "summary": "Get payment status",
+          "responses": {
+            "200": {
+              "description": "Payment status"
+            }
+          }
+        }
+      },
+      "/sales/item-requests": {
+        "get": {
+          "summary": "Get item requests from sales",
+          "responses": {
+            "200": {
+              "description": "Item requests data"
+            }
+          }
+        }
+      },
+      "/warehouse/inventory": {
+        "get": {
+          "summary": "Get inventory data",
+          "responses": {
+            "200": {
+              "description": "Inventory data"
+            }
+          }
+        }
+      },
+      "/warehouse/storage-capacity": {
+        "get": {
+          "summary": "Get storage capacity data",
+          "responses": {
+            "200": {
+              "description": "Storage capacity data"
+            }
+          }
+        }
+      },
+      "/warehouse/item-status": {
+        "get": {
+          "summary": "Get item status",
+          "responses": {
+            "200": {
+              "description": "Item status data"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "PurchaseRequest": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "item_name": {
+              "type": "string",
+              "example": "Laptop"
+            },
+            "quantity": {
+              "type": "integer",
+              "example": 10
+            },
+            "status": {
+              "type": "string",
+              "example": "Pending"
+            }
+          }
+        },
+        "NewPurchaseRequest": {
+          "type": "object",
+          "required": ["item_name", "quantity", "status"],
+          "properties": {
+            "item_name": {
+              "type": "string",
+              "example": "Laptop"
+            },
+            "quantity": {
+              "type": "integer",
+              "example": 10
+            },
+            "status": {
+              "type": "string",
+              "example": "Pending"
+            }
+          }
+        },
+        "UpdatePurchaseRequest": {
+          "type": "object",
+          "properties": {
+            "item_name": {
+              "type": "string",
+              "example": "Laptop"
+            },
+            "quantity": {
+              "type": "integer",
+              "example": 15
+            },
+            "status": {
+              "type": "string",
+              "example": "Approved"
+            }
+          }
+        },
+        "PurchaseRequestResponse": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "example": "Purchase request created successfully"
+            },
+            "id": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        }
+      }
+    }
+  }
