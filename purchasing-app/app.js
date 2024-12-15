@@ -22,6 +22,8 @@ db.connect((err) => {
 // Import routes
 const vendorRoutes = require('./routes/vendors');
 const purchaseRequestsRoutes = require('./routes/purchaseRequests');
+const reportRoutes = require('./routes/report');
+const purchaseApprovalRoutes = require('./routes/purchaseApproval');
 
 const app = express();
 app.use(bodyParser.json());
@@ -34,6 +36,9 @@ app.get('/', (req, res) => {
 // Set up routes
 app.use('/vendors', vendorRoutes);
 app.use('/purchaseRequests', purchaseRequestsRoutes);
+app.use('/report', reportRoutes);
+app.use('/purchaseApproval', purchaseApprovalRoutes);
+
 
 // Set up Swagger UI for OpenAPI documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

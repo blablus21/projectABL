@@ -6,47 +6,129 @@
     },
     "paths": {
       "/vendors": {
-        "get": {
-          "summary": "Get list of vendors",
-          "responses": {
-            "200": {
-              "description": "A list of vendors"
-            }
-          },
-          "content" : {
-            "application/json" : {
+      "get": {
+        "summary": "Get list of vendors",
+        "description": "Retrieve a list of all vendors.",
+        "responses": {
+          "200": {
+            "description": "List of vendors",
+            "content": {
+              "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "type": "object" }
+                  "items": {
+                    "$ref": "#/components/schemas/Vendor"
+                  }
                 }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Add a new vendor",
+        "description": "Create a new vendor entry.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewVendor"
+              }
             }
           }
         },
-        "post" : {
-            "summary": "Add a new vendor",
-            "requestBody" : {
-                "required": false,
-                "content": {
-                    "application/json" : {
-                        "schema" : {
-                            "type": "object",
-                            "properties": {
-                                "name" : { "type": "string"},
-                                "contact" : {"type" : "string"}
-                            },
-                        "required": ["name", "contact"]
-                        }
-                    }
+        "responses": {
+          "201": {
+            "description": "Vendor created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorResponse"
                 }
+              }
             }
-
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/vendors/{id}": {
+      "put": {
+        "summary": "Update vendor details",
+        "description": "Modify an existing vendor's details.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the vendor to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVendor"
+              }
+            }
+          }
         },
-        "responses" : {
-            "201": {
-                "description" : "Vendor added"
+        "responses": {
+          "200": {
+            "description": "Vendor updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorResponse"
+                }
+              }
             }
+          },
+          "404": {
+            "description": "Vendor not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
         }
       },
+      "delete": {
+        "summary": "Delete a vendor",
+        "description": "Remove a vendor from the system.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the vendor to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vendor deleted successfully"
+          },
+          "404": {
+            "description": "Vendor not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
       "/purchase-requests": {
       "get": {
         "summary": "Get all purchase requests",
@@ -204,16 +286,100 @@
         }
       }
     },
-      "/purchase-approvals": {
-        "post": {
-          "summary": "Approve a purchase request",
-          "responses": {
-            "200": {
-              "description": "Purchase request approved"
+    "/purchase-approvals": {
+      "get": {
+        "summary": "Get pending purchase approvals",
+        "description": "Retrieve a list of purchase requests that are waiting for approval.",
+        "responses": {
+          "200": {
+            "description": "List of pending purchase requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PurchaseRequest"
+                  }
+                }
+              }
             }
+          },
+          "500": {
+            "description": "Server error"
           }
         }
-      },
+      }
+    },
+    "/purchase-approvals/{id}": {
+      "post": {
+        "summary": "Approve a purchase request",
+        "description": "Approve a specific purchase request by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the purchase request to approve"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "approver": {
+                    "type": "string",
+                    "example": "John Doe"
+                  },
+                  "remarks": {
+                    "type": "string",
+                    "example": "Approved for immediate processing"
+                  }
+                },
+                "required": ["approver"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Purchase request approved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Purchase request approved successfully"
+                    },
+                    "id": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "approver": {
+                      "type": "string",
+                      "example": "John Doe"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Purchase request not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
       "/quality-checks": {
         "post": {
           "summary": "Check quality of goods",
@@ -265,15 +431,71 @@
         }
       },
       "/purchase-reports": {
-        "get": {
-          "summary": "Generate purchase report",
-          "responses": {
-            "200": {
-              "description": "Purchase report generated"
+      "get": {
+        "summary": "Generate purchase reports",
+        "description": "Retrieve a report of all purchase requests, including details such as item name, quantity, status, and approver.",
+        "responses": {
+          "200": {
+            "description": "Purchase report generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Purchase report generated successfully"
+                    },
+                    "report": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PurchaseRequestReport"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No purchase requests found for the report",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "No purchase requests found for the report"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Server error"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Database connection error"
+                    }
+                  }
+                }
+              }
             }
           }
         }
-      },
+      }
+    },
       "/finance/budget": {
         "get": {
           "summary": "Get budget data",
@@ -337,6 +559,74 @@
     },
     "components": {
       "schemas": {
+        "Vendor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "ABC Supplies"
+          },
+          "contact": {
+            "type": "string",
+            "example": "abc@supplies.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+1234567890"
+          }
+        }
+      },
+      "NewVendor": {
+        "type": "object",
+        "required": ["name", "contact", "phone"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "ABC Supplies"
+          },
+          "contact": {
+            "type": "string",
+            "example": "abc@supplies.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+1234567890"
+          }
+        }
+      },
+      "UpdateVendor": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "ABC Supplies Updated"
+          },
+          "contact": {
+            "type": "string",
+            "example": "newcontact@supplies.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+9876543210"
+          }
+        }
+      },
+      "VendorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Vendor operation successful"
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/Vendor"
+          }
+        }
+      },
         "PurchaseRequest": {
           "type": "object",
           "properties": {
@@ -405,7 +695,78 @@
               "example": 1
             }
           }
+        },
+        "ApprovalRequest": {
+          "type": "object",
+          "properties": {
+            "approver": {
+              "type": "string",
+              "example": "John Doe"
+            },
+            "remarks": {
+              "type": "string",
+              "example": "Approved for immediate processing"
+            }
+          },
+          "required": ["approver"]
+        },
+        "ApprovalResponse": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "example": "Purchase request approved successfully"
+            },
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "approver": {
+              "type": "string",
+              "example": "John Doe"
+            }
+          }
+        },
+        "PurchaseRequestReport": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "item_name": {
+            "type": "string",
+            "example": "Laptop"
+          },
+          "quantity": {
+            "type": "integer",
+            "example": 10
+          },
+          "status": {
+            "type": "string",
+            "example": "Approved"
+          },
+          "approver": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "remarks": {
+            "type": "string",
+            "example": "Urgent requirement"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-12-15T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-12-15T12:00:00Z"
+          }
         }
       }
+    }
+      
     }
   }

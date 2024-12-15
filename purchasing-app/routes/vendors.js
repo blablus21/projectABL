@@ -1,33 +1,75 @@
 const express = require('express');
 const router = express.Router();
 
-const vendors = [];
 
-// GET all vendors
+// GET /vendors - Mendapatkan daftar vendor
 router.get('/', (req, res) => {
-  res.json(vendors);
+  db.query('SELECT * FROM vendor', (err, results) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json(results);
+  });
 });
 
-// Add a new vendor
+// POST /vendors - Menambahkan vendor baru
 router.post('/', (req, res) => {
-  const vendor = req.body;
-  vendors.push(vendor);
-  res.status(201).json({ message: 'Vendor added successfully', vendor });
+  const { name, contact } = req.body;
+
+  if (!name || !contact) {
+    return res.status(400).json({ message: 'Name and contact are required' });
+  }
+
+  const query = 'INSERT INTO vendor (name, contact) VALUES (?, ?)';
+  db.query(query, [name, contact], (err, results) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.status(201).json({ message: 'Vendor added successfully', id: results.insertId });
+  });
 });
 
-// Update vendor by ID
+// PUT /vendors/:id - Memperbarui data vendor
 router.put('/:id', (req, res) => {
   const { id } = req.params;
-  const updatedVendor = req.body;
-  vendors[id] = updatedVendor;
-  res.json({ message: 'Vendor updated successfully', updatedVendor });
+  const { name, contact } = req.body;
+
+  if (!name || !contact) {
+    return res.status(400).json({ message: 'Name and contact are required' });
+  }
+
+  const query = 'UPDATE vendor SET name = ?, contact = ? WHERE id = ?';
+  db.query(query, [name, contact, id], (err, results) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    if (results.affectedRows === 0) {
+      res.status(404).json({ message: 'Vendor not found' });
+      return;
+    }
+    res.json({ message: 'Vendor updated successfully' });
+  });
 });
 
-// Delete vendor by ID
+// DELETE /vendors/:id - Menghapus data vendor
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  vendors.splice(id, 1);
-  res.json({ message: 'Vendor deleted successfully' });
+
+  const query = 'DELETE FROM vendor WHERE id = ?';
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    if (results.affectedRows === 0) {
+      res.status(404).json({ message: 'Vendor not found' });
+      return;
+    }
+    res.json({ message: 'Vendor deleted successfully' });
+  });
 });
 
 module.exports = router;
