@@ -390,16 +390,118 @@
           }
         }
       },
-      "/inventory-monitoring": {
-        "get": {
-          "summary": "Monitor inventory",
-          "responses": {
-            "200": {
-              "description": "Inventory status"
+      "/inventory": {
+      "get": {
+        "summary": "Get inventory data",
+        "description": "Retrieve a list of inventory items from the warehouse.",
+        "responses": {
+          "200": {
+            "description": "List of inventory items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InventoryItem"
+                  }
+                }
+              }
             }
+          },
+          "500": {
+            "description": "Server error"
           }
         }
       },
+      "post": {
+        "summary": "Update received item status",
+        "description": "Add or update the status of an inventory item that has been received.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewInventoryItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Inventory item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/payments": {
+      "get": {
+        "summary": "Get payment status",
+        "description": "Retrieve the status of payments made to vendors.",
+        "responses": {
+          "200": {
+            "description": "List of payment statuses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Payment"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Send payment data to Finance",
+        "description": "Submit payment data to the Finance division.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewPayment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Payment data sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
       "/vendor-payments": {
         "post": {
           "summary": "Process vendor payment",
@@ -410,26 +512,31 @@
           }
         }
       },
-      "/shipment-tracking": {
+      "/shipments": {
         "get": {
-          "summary": "Track shipment",
+          "summary": "Track shipment status",
+          "description": "Retrieve the status of shipments.",
           "responses": {
             "200": {
-              "description": "Shipment status"
+              "description": "List of shipment statuses",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Shipment"
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server error"
             }
           }
         }
       },
-      "/receiving": {
-        "post": {
-          "summary": "Manage receiving of goods",
-          "responses": {
-            "200": {
-              "description": "Goods received"
-            }
-          }
-        }
-      },
+      
       "/purchase-reports": {
       "get": {
         "summary": "Generate purchase reports",
@@ -496,137 +603,191 @@
         }
       }
     },
-      "/finance/budget": {
-        "get": {
-          "summary": "Get budget data",
-          "responses": {
-            "200": {
-              "description": "Budget data"
+    "/finance/budget": {
+      "get": {
+        "summary": "Get budget data",
+        "responses": {
+          "200": {
+            "description": "Budget data retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Budget" }
+                }
+              }
             }
-          }
-        }
-      },
-      "/finance/payment-status": {
-        "get": {
-          "summary": "Get payment status",
-          "responses": {
-            "200": {
-              "description": "Payment status"
-            }
-          }
-        }
-      },
-      "/sales/item-requests": {
-        "get": {
-          "summary": "Get item requests from sales",
-          "responses": {
-            "200": {
-              "description": "Item requests data"
-            }
-          }
-        }
-      },
-      "/warehouse/inventory": {
-        "get": {
-          "summary": "Get inventory data",
-          "responses": {
-            "200": {
-              "description": "Inventory data"
-            }
-          }
-        }
-      },
-      "/warehouse/storage-capacity": {
-        "get": {
-          "summary": "Get storage capacity data",
-          "responses": {
-            "200": {
-              "description": "Storage capacity data"
-            }
-          }
-        }
-      },
-      "/warehouse/item-status": {
-        "get": {
-          "summary": "Get item status",
-          "responses": {
-            "200": {
-              "description": "Item status data"
-            }
-          }
+          },
+          "500": { "description": "Server error" }
         }
       }
     },
+    "/finance/payment-status": {
+      "get": {
+        "summary": "Get payment status",
+        "responses": {
+          "200": {
+            "description": "Payment status retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Payment" }
+                }
+              }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/sales/item-requests": {
+      "get": {
+        "summary": "Get item requests",
+        "responses": {
+          "200": {
+            "description": "Item requests retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ItemRequest" }
+                }
+              }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/warehouse/inventory": {
+      "get": {
+        "summary": "Get inventory data",
+        "responses": {
+          "200": {
+            "description": "Inventory data retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Inventory" }
+                }
+              }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/warehouse/storage-capacity": {
+      "get": {
+        "summary": "Get storage capacity data",
+        "responses": {
+          "200": {
+            "description": "Storage capacity data retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/StorageCapacity" }
+                }
+              }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/warehouse/item-status": {
+      "get": {
+        "summary": "Get item status data",
+        "responses": {
+          "200": {
+            "description": "Item status data retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ItemStatus" }
+                }
+              }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    }
+    },
     "components": {
       "schemas": {
-        "Vendor": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "example": 1
-          },
-          "name": {
-            "type": "string",
-            "example": "ABC Supplies"
-          },
-          "contact": {
-            "type": "string",
-            "example": "abc@supplies.com"
-          },
-          "phone": {
-            "type": "string",
-            "example": "+1234567890"
+          "Vendor": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "name": {
+              "type": "string",
+              "example": "ABC Supplies"
+            },
+            "contact": {
+              "type": "string",
+              "example": "abc@supplies.com"
+            },
+            "phone": {
+              "type": "string",
+              "example": "+1234567890"
+            }
           }
-        }
-      },
-      "NewVendor": {
-        "type": "object",
-        "required": ["name", "contact", "phone"],
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "ABC Supplies"
-          },
-          "contact": {
-            "type": "string",
-            "example": "abc@supplies.com"
-          },
-          "phone": {
-            "type": "string",
-            "example": "+1234567890"
+        },
+        "NewVendor": {
+          "type": "object",
+          "required": ["name", "contact", "phone"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "example": "ABC Supplies"
+            },
+            "contact": {
+              "type": "string",
+              "example": "abc@supplies.com"
+            },
+            "phone": {
+              "type": "string",
+              "example": "+1234567890"
+            }
           }
-        }
-      },
-      "UpdateVendor": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "ABC Supplies Updated"
-          },
-          "contact": {
-            "type": "string",
-            "example": "newcontact@supplies.com"
-          },
-          "phone": {
-            "type": "string",
-            "example": "+9876543210"
+        },
+        "UpdateVendor": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "example": "ABC Supplies Updated"
+            },
+            "contact": {
+              "type": "string",
+              "example": "newcontact@supplies.com"
+            },
+            "phone": {
+              "type": "string",
+              "example": "+9876543210"
+            }
           }
-        }
-      },
-      "VendorResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "example": "Vendor operation successful"
-          },
-          "vendor": {
-            "$ref": "#/components/schemas/Vendor"
+        },
+        "VendorResponse": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "example": "Vendor operation successful"
+            },
+            "vendor": {
+              "$ref": "#/components/schemas/Vendor"
+            }
           }
-        }
-      },
+        },
         "PurchaseRequest": {
           "type": "object",
           "properties": {
@@ -729,44 +890,225 @@
         },
         "PurchaseRequestReport": {
         "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "example": 1
-          },
-          "item_name": {
-            "type": "string",
-            "example": "Laptop"
-          },
-          "quantity": {
-            "type": "integer",
-            "example": 10
-          },
-          "status": {
-            "type": "string",
-            "example": "Approved"
-          },
-          "approver": {
-            "type": "string",
-            "example": "John Doe"
-          },
-          "remarks": {
-            "type": "string",
-            "example": "Urgent requirement"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2024-12-15T10:00:00Z"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2024-12-15T12:00:00Z"
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "item_name": {
+              "type": "string",
+              "example": "Laptop"
+            },
+            "quantity": {
+              "type": "integer",
+              "example": 10
+            },
+            "status": {
+              "type": "string",
+              "example": "Approved"
+            },
+            "approver": {
+              "type": "string",
+              "example": "John Doe"
+            },
+            "remarks": {
+              "type": "string",
+              "example": "Urgent requirement"
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2024-12-15T10:00:00Z"
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2024-12-15T12:00:00Z"
+            }
           }
+        },
+        "InventoryItem": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "item_name": {
+              "type": "string",
+              "example": "Laptop"
+            },
+            "quantity": {
+              "type": "integer",
+              "example": 50
+            },
+            "status": {
+              "type": "string",
+              "example": "Available"
+            }
+          }
+        },
+        "NewInventoryItem": {
+          "type": "object",
+          "required": ["item_name", "quantity", "status"],
+          "properties": {
+            "item_name": {
+              "type": "string",
+              "example": "Laptop"
+            },
+            "quantity": {
+              "type": "integer",
+              "example": 10
+            },
+            "status": {
+              "type": "string",
+              "example": "Received"
+            }
+          }
+        },
+        "InventoryResponse": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "example": "Inventory item updated successfully"
+            },
+            "id": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        },
+        "Payment": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "vendor_id": {
+              "type": "integer",
+              "example": 5
+            },
+            "amount": {
+              "type": "number",
+              "example": 15000.50
+            },
+            "payment_date": {
+              "type": "string",
+              "format": "date",
+              "example": "2024-12-01"
+            },
+            "status": {
+              "type": "string",
+              "example": "Completed"
+            }
+          }
+        },
+        "NewPayment": {
+          "type": "object",
+          "required": ["vendor_id", "amount", "payment_date", "status"],
+          "properties": {
+            "vendor_id": {
+              "type": "integer",
+              "example": 5
+            },
+            "amount": {
+              "type": "number",
+              "example": 15000.50
+            },
+            "payment_date": {
+              "type": "string",
+              "format": "date",
+              "example": "2024-12-01"
+            },
+            "status": {
+              "type": "string",
+              "example": "Pending"
+            }
+          }
+        },
+        "PaymentResponse": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "example": "Payment data sent successfully"
+            },
+            "id": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        },
+        "Shipment": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "tracking_number": {
+              "type": "string",
+              "example": "TRK123456789"
+            },
+            "status": {
+              "type": "string",
+              "example": "In Transit"
+            },
+            "estimated_delivery_date": {
+              "type": "string",
+              "format": "date",
+              "example": "2024-12-30"
+            },
+            "carrier": {
+              "type": "string",
+              "example": "DHL"
+            }
+          }
+        },
+        "Budget": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer" },
+              "amount": { "type": "number" },
+              "allocated_to": { "type": "string" }
+            }
+        },
+        "ItemRequest": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "integer" },
+            "item_name": { "type": "string" },
+            "quantity": { "type": "integer" },
+            "requested_by": { "type": "string" }
+          }
+        },
+        "Inventory": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "item_name": { "type": "string" },
+          "quantity": { "type": "integer" }
+        }
+      },
+      "StorageCapacity": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "capacity": { "type": "integer" },
+          "used": { "type": "integer" }
+        }
+      },
+      "ItemStatus": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "item_name": { "type": "string" },
+          "status": { "type": "string" }
         }
       }
+      }
     }
-      
+  
     }
-  }

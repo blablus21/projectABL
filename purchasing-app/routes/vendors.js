@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-
+const db = require('../db');
 
 // GET /vendors - Mendapatkan daftar vendor
 router.get('/', (req, res) => {
-  db.query('SELECT * FROM vendor', (err, results) => {
+  db.query('SELECT * FROM vendors', (err, results) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
@@ -21,7 +21,7 @@ router.post('/', (req, res) => {
     return res.status(400).json({ message: 'Name and contact are required' });
   }
 
-  const query = 'INSERT INTO vendor (name, contact) VALUES (?, ?)';
+  const query = 'INSERT INTO vendors (name, contact) VALUES (?, ?)';
   db.query(query, [name, contact], (err, results) => {
     if (err) {
       res.status(500).json({ error: err.message });
@@ -40,7 +40,7 @@ router.put('/:id', (req, res) => {
     return res.status(400).json({ message: 'Name and contact are required' });
   }
 
-  const query = 'UPDATE vendor SET name = ?, contact = ? WHERE id = ?';
+  const query = 'UPDATE vendors SET name = ?, contact = ? WHERE id = ?';
   db.query(query, [name, contact, id], (err, results) => {
     if (err) {
       res.status(500).json({ error: err.message });
@@ -58,7 +58,7 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
 
-  const query = 'DELETE FROM vendor WHERE id = ?';
+  const query = 'DELETE FROM vendors WHERE id = ?';
   db.query(query, [id], (err, results) => {
     if (err) {
       res.status(500).json({ error: err.message });

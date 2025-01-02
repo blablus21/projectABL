@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const db = require('../db');
 // Generate purchase reports
 router.get('/', async (req, res) => {
     try {
@@ -10,11 +10,7 @@ router.get('/', async (req, res) => {
                 id, 
                 item_name, 
                 quantity, 
-                status, 
-                approver, 
-                remarks, 
-                created_at, 
-                updated_at 
+                status
             FROM purchase_requests
         `);
 
